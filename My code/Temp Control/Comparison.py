@@ -6,7 +6,7 @@ def compare_coarse_fine_qvalues(coarse_cell_idx, coarse_grid_size=10, fine_grid_
     
     # Load Q-tables
     qtable_fine = pd.read_excel(r'C:\Users\Ahan_FOCASLab\OneDrive - Indian Institute of Science\PhD Projects and Other\Ahan PhD work\Q learning using Incremental Stability\Q-learn-with-Inc.-Stability\Q-learn-ISS\My code\Temp Control\Qtable_25_structured.xlsx')
-    qtable_coarse = pd.read_excel(r'C:\Users\Ahan_FOCASLab\OneDrive - Indian Institute of Science\PhD Projects and Other\Ahan PhD work\Q learning using Incremental Stability\Q-learn-with-Inc.-Stability\Q-learn-ISS\My code\Temp Control\Qtable_10_structured.xlsx')
+    qtable_coarse = pd.read_excel(r'C:\Users\Ahan_FOCASLab\OneDrive - Indian Institute of Science\PhD Projects and Other\Ahan PhD work\Q learning using Incremental Stability\Q-learn-with-Inc.-Stability\Q-learn-ISS\My code\Temp Control\Qtable_11_structured.xlsx')
 
     # Unpack coarse cell index
     i, j, k = coarse_cell_idx
@@ -79,7 +79,7 @@ def compare_coarse_fine_qvalues(coarse_cell_idx, coarse_grid_size=10, fine_grid_
 
     return fine_df, coarse_df
 
-coarse_idx = (4, 5, 6)
+coarse_idx = (6, 8, 6)
 
 fine_df, coarse_df = compare_coarse_fine_qvalues(coarse_idx)
 
