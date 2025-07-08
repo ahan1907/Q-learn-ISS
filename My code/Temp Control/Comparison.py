@@ -79,7 +79,7 @@ def compare_coarse_fine_qvalues(coarse_cell_idx, coarse_grid_size=10, fine_grid_
 
     return fine_df, coarse_df
 
-coarse_idx = (6, 8, 6)
+coarse_idx = (9, 4, 6)
 
 fine_df, coarse_df = compare_coarse_fine_qvalues(coarse_idx)
 

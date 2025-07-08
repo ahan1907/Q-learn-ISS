@@ -15,7 +15,7 @@ actionMin = [0; 0; 0];
 actionMax = [1; 1; 1];
 
 % Discretize state and action spaces (adjust based on your needs)
-n_x = 11;
+n_x = 26;
 n_modes = 2;
 samplingTime = 0.2;
 
@@ -144,7 +144,7 @@ qtable_header = {'state_idx_x', 'state_idx_y', 'state_idx_z', ...
                  'action_idx_x', 'action_idx_y', 'action_idx_z', 'Q_value'};
 
 % Write with header
-writecell([qtable_header; num2cell(qtable_data)], 'Qtable_11_structured.xlsx');
+writecell([qtable_header; num2cell(qtable_data)], 'Qtable_25_structured.xlsx');
 
 %% Visualisation; 
 disp(' ')
