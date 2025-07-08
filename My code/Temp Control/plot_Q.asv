@@ -1,0 +1,47 @@
+clear;
+clc;
+
+optPol_25 = table2array(readtable('optPolicy_25.xlsx'));
+optPol_50 = table2array(readtable('optPolicy_50.xlsx'));
+
+grid1d = linspace(-10,40,25);
+%%
+[X25, Y25, Z25] = ndgrid(grid1d, grid1d, grid1d);  % grid of indices
+opt_25vals = optPol_25(:);  % Flatten Q-values
+
+% Flatten grid for scatter3
+x25 = X25(:);
+y25 = Y25(:);
+z25 = Z25(:);
+
+% Plot
+figure;
+scatter3(x25, y25, z25, 15, opt_25vals, 'filled');
+xlabel('Position Index');
+ylabel('Velocity Index');
+zlabel('Acceleration Index');
+title('3D Visualization of Q-values');
+colorbar;
+view(135, 30);  % Adjust viewing angle
+
+%%
+
+[n_pos_50, n_vel_50, n_acc_50] = size(optPol_25);
+
+[X50, Y50, Z50] = ndgrid(1:n_pos_50, 1:n_vel_50, 1:n_acc_50);  % grid of indices
+opt_50vals = optPol_50(:);  % Flatten Q-values
+
+% Flatten grid for scatter3
+x50 = X50(:);
+y50 = Y50(:);
+z50 = Z50(:);
+
+% Plot
+figure;
+scatter3(x50, y50, z50, 15, opt_50vals, 'filled');
+xlabel('Position Index');
+ylabel('Velocity Index');
+zlabel('Acceleration Index');
+title('3D Visualization of Q-values');
+colorbar;
+view(135, 30);  % Adjust viewing angle
