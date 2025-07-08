@@ -15,9 +15,9 @@ actionMin = [0; 0; 0];
 actionMax = [1; 1; 1];
 
 % Discretize state and action spaces (adjust based on your needs)
-n_x = 50;
+n_x = 10;
 n_modes = 2;
-samplingTime = 0.1;
+samplingTime = 0.2;
 
 stateGrid = cell(stateDim, 1);
 actionGrid = cell(actionDim, 1);
@@ -29,7 +29,7 @@ for i = 1:actionDim
 end
 
 % Define Q-table
-Q_50 = zeros(n_x^stateDim, n_modes^actionDim);
+Q_25 = zeros(n_x^stateDim, n_modes^actionDim);
 
 % Set training parameters
 maxEpisodes = 8000;
@@ -54,7 +54,7 @@ for i = 1:maxEpisodes
     if rand < epsilon
       action = randi(n_modes, 1);
     else
-      [~, action] = max(Q_50(stateLine, :));
+      [~, action] = max(Q_25(stateLine, :));
     end
 
     % Convert the linear index to row and column indices
@@ -64,7 +64,7 @@ for i = 1:maxEpisodes
     continuousAction = [actionGrid{1}(row_idx) actionGrid{2}(col_idx), actionGrid{3}(dep_idx)];
     
     % Take action and observe reward (replace with your reward function)
-    nextX = update_environment(state, continuousAction, 0.1); % Ts = 0.1 assumed
+    nextX = update_environment(state, continuousAction, samplingTime); % Ts = 0.1 assumed
 
     % Example reward
     % Check if the temparature is inside the desired domain
@@ -82,10 +82,10 @@ for i = 1:maxEpisodes
     nextXLine = discretizeState(nextX, stateGrid, stateDim, n_x);
 
     % Update Q-value using Q-learning update rule
-    qValue = Q_50(stateLine, action);
-    maxQnext = max(Q_50(nextXLine, :));
+    qValue = Q_25(stateLine, action);
+    maxQnext = max(Q_25(nextXLine, :));
     newQValue = qValue + learningRate * (reward + discountFactor * maxQnext - qValue);
-    Q_50(stateLine, action) = newQValue;
+    Q_25(stateLine, action) = newQValue;
 
     % Update state for next step
     state = nextX;
@@ -112,7 +112,7 @@ end
 optimalPolicy_25 = zeros(n_x^stateDim, actionDim);
 for stateLine = 1:n_x^stateDim
     % Find the action with the highest Q-value for the current state
-    [~, optimalAction] = max(Q_50(stateLine, :));
+    [~, optimalAction] = max(Q_25(stateLine, :));
     
     % Convert the linear index of the action to row and column indices
     [row_idx, col_idx, dep_idx] = ind2sub([n_modes, n_modes, n_modes], optimalAction);
@@ -132,7 +132,7 @@ for stateLine = 1:n_x^stateDim
 
     for a = 1:n_modes^actionDim
         [ai, aj, ak] = ind2sub([n_modes, n_modes, n_modes], a);
-        q_value = Q_50(stateLine, a);
+        q_value = Q_25(stateLine, a);
 
         % Append [state indices, action indices, Q-value]
         qtable_data = [qtable_data; i, j, k, ai, aj, ak, q_value];
@@ -144,7 +144,7 @@ qtable_header = {'state_idx_x', 'state_idx_y', 'state_idx_z', ...
                  'action_idx_x', 'action_idx_y', 'action_idx_z', 'Q_value'};
 
 % Write with header
-writecell([qtable_header; num2cell(qtable_data)], 'Qtable_50_structured.xlsx');
+writecell([qtable_header; num2cell(qtable_data)], 'Qtable_25_structured.xlsx');
 
 %% Visualisation; 
 disp(' ')
@@ -250,7 +250,7 @@ end
 function x_next = update_environment(x, u, Ts)
     % Define state space specifications
     x_min = [-10; -10; -10];
-    x_max = [25; 25; 25];
+    x_max = [40; 40; 40];
     
     % Compute intermediate variables
     a = 1/20;

@@ -2,14 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-import pandas as pd
-
-def compare_coarse_fine_qvalues(coarse_cell_idx, coarse_grid_size=25, fine_grid_size=50, action_bins=2):
+def compare_coarse_fine_qvalues(coarse_cell_idx, coarse_grid_size=10, fine_grid_size=25, action_bins=2):
     
     # Load Q-tables
-    qtable_fine = pd.read_excel(r'C:\Users\Ahan_FOCASLab\OneDrive - Indian Institute of Science\PhD Projects and Other\Ahan PhD work\Q learning using Incremental Stability\Q-learn-with-Inc.-Stability\Q-learn-with-Inc.-Stability\My code\Temp Control\Q_50.xlsx', header=None)
-    print(qtable_fine.columns)
-    qtable_coarse = pd.read_excel(r'C:\Users\Ahan_FOCASLab\OneDrive - Indian Institute of Science\PhD Projects and Other\Ahan PhD work\Q learning using Incremental Stability\Q-learn-with-Inc.-Stability\Q-learn-with-Inc.-Stability\My code\Temp Control\Q_25.xlsx', header=None)
+    qtable_fine = pd.read_excel(r'C:\Users\Ahan_FOCASLab\OneDrive - Indian Institute of Science\PhD Projects and Other\Ahan PhD work\Q learning using Incremental Stability\Q-learn-with-Inc.-Stability\Q-learn-ISS\My code\Temp Control\Qtable_25_structured.xlsx')
+    qtable_coarse = pd.read_excel(r'C:\Users\Ahan_FOCASLab\OneDrive - Indian Institute of Science\PhD Projects and Other\Ahan PhD work\Q learning using Incremental Stability\Q-learn-with-Inc.-Stability\Q-learn-ISS\My code\Temp Control\Qtable_10_structured.xlsx')
 
     # Unpack coarse cell index
     i, j, k = coarse_cell_idx
@@ -47,7 +44,7 @@ def compare_coarse_fine_qvalues(coarse_cell_idx, coarse_grid_size=25, fine_grid_
                                 "action_x": ax,
                                 "action_y": ay,
                                 "action_z": az,
-                                "fine_Q": row['Q-value']
+                                "fine_Q": row['Q_value']
                             })
 
     # Create DataFrame of fine Q-values
@@ -61,21 +58,30 @@ def compare_coarse_fine_qvalues(coarse_cell_idx, coarse_grid_size=25, fine_grid_
     ]
 
     # Create a dictionary for fast lookup of coarse Q-values by action
-    coarse_q_map = {(row['action_idx_x'], row['action_idx_y'], row['action_idx_z']): row['Q-value'] for _, row in coarse_rows.iterrows()}
+    coarse_q_map = {(row['action_idx_x'], row['action_idx_y'], row['action_idx_z']): row['Q_value'] for _, row in coarse_rows.iterrows()}
 
     # Add coarse Q-values to each fine entry
     fine_df["coarse_Q"] = fine_df.apply(lambda row: coarse_q_map.get((row["action_x"], row["action_y"], row["action_z"]), None),axis=1)
 
-    return fine_df
+    # Create DataFrame for coarse Q-values (once per action)
+    coarse_q_records = []
+    for (ax, ay, az), qval in coarse_q_map.items():
+        coarse_q_records.append({
+            "coarse_state_x": i,
+            "coarse_state_y": j,
+            "coarse_state_z": k,
+            "action_x": ax,
+            "action_y": ay,
+            "action_z": az,
+            "coarse_Q": qval
+        })
+    coarse_df = pd.DataFrame(coarse_q_records)
 
-coarse_idx = (10, 12, 6)
-fine_path = "qtable_50.xlsx"
-coarse_path = "qtable_25.xlsx"
+    return fine_df, coarse_df
 
-df = compare_coarse_fine_qvalues(coarse_idx)
+coarse_idx = (4, 5, 6)
 
-# Save to Excel
-df.to_excel("comparison_qvalues_cell_10_12_6.xlsx", index=False)
+fine_df, coarse_df = compare_coarse_fine_qvalues(coarse_idx)
 
-# Preview
-print(df.head())
+print("Fine Q-values:")
+print(fine_df.head())
